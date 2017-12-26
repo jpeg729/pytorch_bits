@@ -1,0 +1,4 @@
+signalz
+numpy
+matplotlib
+torch
