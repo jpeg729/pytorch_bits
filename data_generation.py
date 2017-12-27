@@ -25,9 +25,9 @@ def get_batches(X, y, seq_len=100, reason=None):
         end = start + seq_len
         yield batch, X[start:end], y[start:end]
         if batch + 1 < batches:
-            print("\r%s -- %.1f%% done -- time %.5f seconds/sample" % (message,
+            print("\r%s -- %.1f%% done -- time %.5f ms/sample" % (message,
                 100. * (batch + 1) / batches, 
-                (time.time()-start_time) / (batch + 1) / X.size(1)), 
+                1000 * (time.time()-start_time) / (batch + 1) / (seq_len * X.size(1))), 
                 end=CLR, flush=True)
     print("\r%s -- time %.5f seconds/sample" % (message, 
         (time.time()-start_time) / (batch + 1) / X.size(1)),
