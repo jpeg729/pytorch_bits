@@ -8,8 +8,8 @@ import signalz
 CLR = "\x1b[0K"
 
 def get_batches(X, y, seq_len=100, reason=None):
-    batches = max(1, (len(X)-seq_len) // seq_len)
-    leftover = len(X) - batches * seq_len
+    batches = len(X) // seq_len
+    leftover = len(X) % seq_len
     offset = np.random.randint(leftover) if reason == "training" else 0
 
     message = str(batches)
