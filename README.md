@@ -61,7 +61,10 @@ Moreover they all take input of shape `(seq_len, batch_size, features)`. This al
 
 * Strongly typed LSTM and GRU from [arxiv:Strongly-Typed Recurrent Neural Networks](https://arxiv.org/abs/1602.02218)
 
-I also plan to study [arxiv:Unbiased Online Recurrent Optimization](http://arxiv.org/abs/1702.05043), but for the moment it is not clear to me how best to implement it.
+### Ideas/research
+
+* I plan to study [arxiv:Unbiased Online Recurrent Optimization](http://arxiv.org/abs/1702.05043), but for the moment it is not clear to me how best to implement it.
+* Optional noisy initial hidden states. Otherwise the model will learn to cope with the fact of having zero initial hidden state which may hinder learning the hidden state dynamics later in the sequences. This probably isn't very important if I have only a few sequences that are very long and that are normalised to zero mean.
 
 ## Optimisers
 
@@ -72,8 +75,6 @@ I also plan to study [arxiv:Unbiased Online Recurrent Optimization](http://arxiv
 * PowerSign optimizer from https://arxiv.org/abs/1709.07417 : lr * g * e ^ (sign(g) * sign(EMA(.9)(g)))
 
 ## Activations
-
-### Work in progress
 
 * ISRLU - [arxiv:Improving Deep Learning by Inverse Square Root Linear Units (ISRLUs)](https://arxiv.org/abs/1710.09967) An alternative to ELU that is faster to calculate.
 * ISRU_tanh - from the same paper. A proposed alternative to tanh
