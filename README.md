@@ -61,12 +61,15 @@ Moreover they all take input of shape `(seq_len, batch_size, features)`. This al
 
 * Strongly typed LSTM and GRU from [arxiv:Strongly-Typed Recurrent Neural Networks](https://arxiv.org/abs/1602.02218)
 
+I also plan to study [arxiv:Unbiased Online Recurrent Optimization](http://arxiv.org/abs/1702.05043), but for the moment it is not clear to me how best to implement it.
+
 ## Optimisers
 
 ### Planned
 
 * ADINE - ADaptive INErtia from [arxiv:ADINE: An Adaptive Momentum Method for Stochastic Gradient Descent](https://arxiv.org/abs/1712.07424)
 * COCOB - COntinuous COin Betting from [arxiv:Training Deep Networks without Learning Rates Through Coin Betting](https://arxiv.org/abs/1705.07795)
+* PowerSign optimizer from https://arxiv.org/abs/1709.07417 : lr * g * e ^ (sign(g) * sign(EMA(.9)(g)))
 
 ## Activations
 
@@ -75,3 +78,9 @@ Moreover they all take input of shape `(seq_len, batch_size, features)`. This al
 * ISRLU - [arxiv:Improving Deep Learning by Inverse Square Root Linear Units (ISRLUs)](https://arxiv.org/abs/1710.09967) An alternative to ELU that is faster to calculate.
 * ISRU_tanh - from the same paper. A proposed alternative to tanh
 * ISRU_sigmoid - from the same paper. A proposed alternative to sigmoid
+
+## Regularisers
+
+### Planned
+
+* DARC1 regularizer from https://arxiv.org/abs/1710.05468
