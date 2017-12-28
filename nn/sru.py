@@ -9,13 +9,13 @@ from .rnn_cell_base import RNNCellBase
 class SRUf(RNNCellBase):
     """The simplest SRU mentioned in the paper."""
 
-    def __init__(self, input_size, hidden_size, bias=True, sigmoid=F.sigmoid, tanh=F.tanh):
+    def __init__(self, input_size, hidden_size, bias=True, sigmoid=None, tanh=None):
         super(SRU, self).__init__()
         self.input_size = input_size
         self.hidden_size = hidden_size
         self.bias = bias
-        self.sigmoid = sigmoid
-        self.tanh = tanh
+        self.sigmoid = self.get_activation(sigmoid)
+        self.tanh = self.get_activation(tanh)
         self.weight_ih = Parameter(torch.Tensor(2 * hidden_size, input_size))
         if bias:
             self.bias_ih = Parameter(torch.Tensor(2 * hidden_size))
@@ -64,11 +64,13 @@ class SRUf(RNNCellBase):
 
 class SRU2(RNNCellBase):
 
-    def __init__(self, input_size, hidden_size, bias=True):
+    def __init__(self, input_size, hidden_size, bias=True, sigmoid=None, tanh=None):
         super(SRU2, self).__init__()
         self.input_size = input_size
         self.hidden_size = hidden_size
         self.bias = bias
+        self.sigmoid = self.get_activation(sigmoid)
+        self.tanh = self.get_activation(tanh)
         self.weight_ih = Parameter(torch.Tensor(3 * hidden_size, input_size))
         if bias:
             self.bias_ih = Parameter(torch.Tensor(3 * hidden_size))
@@ -108,8 +110,8 @@ class SRU2(RNNCellBase):
             gi = F.linear(input_t.view(batch_size, features), self.weight_ih, self.bias_ih)
             i_i, i_f, i_n = gi.chunk(3, 1)
 
-            inputgate = F.sigmoid(i_i)
-            forgetgate = F.sigmoid(i_f)
+            inputgate = self.sigmoid(i_i)
+            forgetgate = self.sigmoid(i_f)
             newgate = i_n
             self.hidden = inputgate * newgate + forgetgate * self.hidden
             outputs[i] = F.tanh(self.hidden)
@@ -118,11 +120,13 @@ class SRU2(RNNCellBase):
 
 class SRU(RNNCellBase):
 
-    def __init__(self, input_size, hidden_size, bias=True):
+    def __init__(self, input_size, hidden_size, bias=True, sigmoid=None, tanh=None):
         super(SRU, self).__init__()
         self.input_size = input_size
         self.hidden_size = hidden_size
         self.bias = bias
+        self.sigmoid = self.get_activation(sigmoid)
+        self.tanh = self.get_activation(tanh)
         self.weight_ih = Parameter(torch.Tensor(3 * hidden_size, input_size))
         if bias:
             self.bias_ih = Parameter(torch.Tensor(3 * hidden_size))
@@ -162,8 +166,8 @@ class SRU(RNNCellBase):
         for i, gi in enumerate(gis.split(1)):
             i_r, i_f, i_n = gi.squeeze().chunk(3, 1)
 
-            readgate = F.sigmoid(i_r)
-            forgetgate = F.sigmoid(i_f)
+            readgate = self.sigmoid(i_r)
+            forgetgate = self.sigmoid(i_f)
             newgate = i_n
             self.hidden = newgate + forgetgate * (self.hidden - newgate)
             outputs[i] = newgate + readgate * (F.tanh(self.hidden) - newgate)

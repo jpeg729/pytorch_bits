@@ -8,11 +8,13 @@ from .rnn_cell_base import RNNCellBase
 
 class MGU(RNNCellBase):
 
-    def __init__(self, input_size, hidden_size, bias=True):
+    def __init__(self, input_size, hidden_size, bias=True, sigmoid=None, tanh=None):
         super(MGU, self).__init__()
         self.input_size = input_size
         self.hidden_size = hidden_size
         self.bias = bias
+        self.sigmoid = self.get_activation(sigmoid)
+        self.tanh = self.get_activation(tanh)
         self.weight_ih = Parameter(torch.Tensor(2 * hidden_size, input_size))
         self.weight_hh = Parameter(torch.Tensor(2 * hidden_size, hidden_size))
         if bias:
@@ -62,8 +64,8 @@ class MGU(RNNCellBase):
             i_f, i_n = gi.chunk(2, 1)
             h_f, h_n = gh.chunk(2, 1)
 
-            forgetgate = F.sigmoid(i_f + h_f)
-            newgate = F.tanh(i_n + forgetgate * h_n)
+            forgetgate = self.sigmoid(i_f + h_f)
+            newgate = self.tanh(i_n + forgetgate * h_n)
             self.hidden = newgate + (1 - forgetgate) * (self.hidden - newgate)
             outputs[i] = self.hidden
         
@@ -71,11 +73,13 @@ class MGU(RNNCellBase):
 
 class MGU2(RNNCellBase):
 
-    def __init__(self, input_size, hidden_size, bias=True):
+    def __init__(self, input_size, hidden_size, bias=True, sigmoid=None, tanh=None):
         super(MGU2, self).__init__()
         self.input_size = input_size
         self.hidden_size = hidden_size
         self.bias = bias
+        self.sigmoid = self.get_activation(sigmoid)
+        self.tanh = self.get_activation(tanh)
         self.weight_ih = Parameter(torch.Tensor(hidden_size, input_size))
         self.weight_hh = Parameter(torch.Tensor(2 * hidden_size, hidden_size))
         if bias:
@@ -124,8 +128,8 @@ class MGU2(RNNCellBase):
             gh = F.linear(self.hidden, self.weight_hh, self.bias_hh)
             h_f, h_n = gh.chunk(2, 1)
 
-            forgetgate = F.sigmoid(h_f)
-            newgate = F.tanh(i_n + forgetgate * h_n)
+            forgetgate = self.sigmoid(h_f)
+            newgate = self.tanh(i_n + forgetgate * h_n)
             self.hidden = newgate + (1 - forgetgate) * (self.hidden - newgate)
             outputs[i] = self.hidden
         

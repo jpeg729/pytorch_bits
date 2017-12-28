@@ -8,11 +8,13 @@ from .rnn_cell_base import RNNCellBase
 
 class fakeQRNN(RNNCellBase):
 
-    def __init__(self, input_size, hidden_size, bias=True):
+    def __init__(self, input_size, hidden_size, bias=True, sigmoid=None, tanh=None):
         super(fakeQRNN, self).__init__()
         self.input_size = input_size
         self.hidden_size = hidden_size
         self.bias = bias
+        self.sigmoid = self.get_activation(sigmoid)
+        self.tanh = self.get_activation(tanh)
         self.weight_ih = Parameter(torch.Tensor(3 * hidden_size, input_size))
         if bias:
             self.bias_ih = Parameter(torch.Tensor(3 * hidden_size))
@@ -52,9 +54,9 @@ class fakeQRNN(RNNCellBase):
             gi = F.linear(x, self.weight_ih, self.bias_ih)
             i_r, i_f, i_n = gi.chunk(3, 1)
 
-            readgate = F.sigmoid(i_r)
-            forgetgate = F.sigmoid(i_f)
-            newgate = F.tanh(i_n)
+            readgate = self.sigmoid(i_r)
+            forgetgate = self.sigmoid(i_f)
+            newgate = self.tanh(i_n)
             self.hidden = newgate + forgetgate * (self.hidden - newgate)
             outputs[i] = readgate * self.hidden
         

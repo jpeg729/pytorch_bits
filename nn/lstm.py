@@ -8,11 +8,13 @@ from .rnn_cell_base import RNNCellBase
 
 class LSTM(RNNCellBase):
 
-    def __init__(self, input_size, hidden_size, bias=True):
+    def __init__(self, input_size, hidden_size, bias=True, sigmoid=None, tanh=None):
         super(LSTM, self).__init__()
         self.input_size = input_size
         self.hidden_size = hidden_size
         self.bias = bias
+        self.sigmoid = self.get_activation(sigmoid)
+        self.tanh = self.get_activation(tanh)
         self.weight_ih = Parameter(torch.Tensor(4 * hidden_size, input_size))
         self.weight_hh = Parameter(torch.Tensor(4 * hidden_size, hidden_size))
         if bias:
@@ -65,10 +67,10 @@ class LSTM(RNNCellBase):
 
             ingate, forgetgate, cellgate, outgate = gates.chunk(4, 1)
 
-            ingate = F.sigmoid(ingate)
-            forgetgate = F.sigmoid(forgetgate)
-            cellgate = F.tanh(cellgate)
-            outgate = F.sigmoid(outgate)
+            ingate = self.sigmoid(ingate)
+            forgetgate = self.sigmoid(forgetgate)
+            cellgate = self.tanh(cellgate)
+            outgate = self.sigmoid(outgate)
 
             cy = (forgetgate * cx) + (ingate * cellgate)
             hy = outgate * F.tanh(cy)

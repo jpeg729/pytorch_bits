@@ -19,6 +19,8 @@ Possible arguments include...
 * `--epochs MAX_EPOCHS`
 * `--lr LR`
 * `--layers LAYERTYPE_SIZE [LAYERTYPE_SIZE ...]` see the section on Model generation
+* `--sigmoid REPLACEMENT` to use an alternative to sigmoid, this can be of the activations mentioned below, e.g. `ISRU_sigmoid`, or any function from torch.nn.functional
+* `--tanh REPLACEMENT` to use an alternative to tanh, this must be one of the activations mentioned below, e.g. `ISRU_tanh`, or any function from torch.nn.functional
 * `--warmup WARMUP` do not use the loss from the first WARMUP elements of the series in order to let the hidden state warm up.
 * `--verbose`
 
@@ -77,9 +79,9 @@ Moreover they all take input of shape `(seq_len, batch_size, features)`. This al
 
 ## Activations
 
-* ISRLU - [arxiv:Improving Deep Learning by Inverse Square Root Linear Units (ISRLUs)](https://arxiv.org/abs/1710.09967) An alternative to ELU that is faster to calculate.
-* ISRU_tanh - from the same paper. A proposed alternative to tanh
-* ISRU_sigmoid - from the same paper. A proposed alternative to sigmoid
+* ISRLU - [arxiv:Improving Deep Learning by Inverse Square Root Linear Units (ISRLUs)](https://arxiv.org/abs/1710.09967) An alternative to ELU that ought to be faster to calculate.
+* ISRU_tanh - from the same paper. A proposed alternative to tanh.
+* ISRU_sigmoid - from the same paper. A proposed alternative to sigmoid.
 
 ## Regularisers
 

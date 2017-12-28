@@ -10,7 +10,9 @@ class CausalConv1d(nn.Conv1d):
                  stride=1,
                  dilation=1,
                  groups=1,
-                 bias=True):
+                 bias=True,
+                 sigmoid=None,
+                 tanh=None):
         self.left_padding = (kernel_size - 1) * dilation
         super(CausalConv1d, self).__init__(
             in_channels,

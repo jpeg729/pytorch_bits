@@ -1,5 +1,8 @@
 
 from torch.nn.modules.module import Module
+import torch.nn.functional as F
+
+import activations
 
 class RNNCellBase(Module):
 
@@ -11,6 +14,11 @@ class RNNCellBase(Module):
             s += ', nonlinearity={nonlinearity}'
         s += ')'
         return s.format(name=self.__class__.__name__, **self.__dict__)
+
+    def get_activation(self, activation):
+        if hasattr(activations, activation):
+            return getattr(activations, activation)
+        return getattr(F, activation)
 
     def check_forward_input(self, input_data):
         if input_data.size(1) != self.input_size:

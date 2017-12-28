@@ -24,6 +24,8 @@ parser.add_argument('--add_noise', action='store_true')
 parser.add_argument('--lr', type=float, default=.0001)
 parser.add_argument('--seq_len', type=int, default=100)
 parser.add_argument('--layers', type=str, nargs="+", default=["LSTM_51"])
+parser.add_argument('--sigmoid', type=str, default=None)
+parser.add_argument('--tanh', type=str, default=None)
 parser.add_argument('--warmup', type=int, default=10)
 parser.add_argument('--verbose', action='store_true')
 args = parser.parse_args()
@@ -33,7 +35,8 @@ X_train, X_val, X_test, y_train, y_val, y_test = data_generation.generate_data(
     data_fn=args.data_fn, batch_size=args.batch_size, 
     length=args.length, add_noise=args.add_noise)
 
-rnn = models.Model(input_size=X_train.size(-1), layers=args.layers, output_size=y_train.size(-1))
+rnn = models.Model(input_size=X_train.size(-1), layers=args.layers, output_size=y_train.size(-1),
+    sigmoid=args.sigmoid, tanh=args.tanh)
 print(rnn)
 print(sum([p.numel() for p in rnn.parameters() if p.requires_grad]), "trainable parameters")
 
