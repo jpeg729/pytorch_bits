@@ -70,7 +70,7 @@ try:
                 optimizer.step()
                 training_loss += loss.data[0]
             rnn.detach_hidden()
-        training_loss /= batch
+        training_loss /= batch + 1
 
         val_loss = 0
         rnn.train(False)
