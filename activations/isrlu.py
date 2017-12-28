@@ -4,7 +4,7 @@ from torch.autograd import Function
 class ISRLU(Function):
     @staticmethod
     def forward(ctx, tensor, alpha=1):
-        negatives = torch.min(tensor, 0 * tensor)
+        negatives = torch.min(tensor, torch.Tensor([0]))
         nisr = torch.rsqrt(1. + alpha * (negatives ** 2))
         # nisr == 1 where tensor elements are positive
         return tensor * nisr
