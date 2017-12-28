@@ -19,6 +19,7 @@ import torch.optim as optim
 
 import data_generation
 import models
+import optim as custom_optim
 # from pytorch_custom.yellowfin import YFOptimizer
 
 parser = ArgumentParser(description='PyTorch example')
@@ -33,9 +34,15 @@ parser.add_argument('--layers', type=str, nargs="+", default=["LSTM_51"])
 parser.add_argument('--sigmoid', type=str, default=None)
 parser.add_argument('--tanh', type=str, default=None)
 parser.add_argument('--warmup', type=int, default=10)
+parser.add_argument('--optim', type=str, default='Adam_HD')
+parser.add_argument('--seed', type=int, default=None)
 parser.add_argument('--verbose', action='store_true')
 args = parser.parse_args()
 print(args)
+
+if args.seed is not None:
+    np.random.seed(args.seed)
+    torch.manual_seed(args.seed)
 
 X_train, X_val, X_test, y_train, y_val, y_test = data_generation.generate_data(
     data_fn=args.data_fn, batch_size=args.batch_size, 
@@ -47,12 +54,10 @@ print(rnn)
 print(sum([p.numel() for p in rnn.parameters() if p.requires_grad]), "trainable parameters")
 
 loss_fn = nn.MSELoss()
-optimizer = optim.RMSprop(rnn.parameters(), lr=args.lr, momentum=0.9)
-# optimizer = optim.SGD(rnn.parameters(), lr=0.000003, momentum=0.95)
-# optimizer = optim.LBFGS(rnn.parameters())
-# optimizer = optim.Adam(rnn.parameters(), lr=args.lr)
-# optimizer = YFOptimizer(rnn.parameters())
-# optimizer = optim.Adagrad(rnn.parameters(), lr=0.0001)
+if hasattr(custom_optim, args.optim):
+    optimizer = getattr(custom_optim, args.optim)(rnn.parameters())
+else:
+    optimizer = getattr(optim, args.optim)(rnn.parameters())
 """
 Training with ground truth -- The input is the ground truth
 """
