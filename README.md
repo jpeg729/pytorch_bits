@@ -71,10 +71,12 @@ Moreover they all take input of shape `(seq_len, batch_size, features)`. This al
 
 ## Optimisers
 
+* COCOB - COntinuous COin Betting from [arxiv:Training Deep Networks without Learning Rates Through Coin Betting](https://arxiv.org/abs/1705.07795)
+* Adam_HD - Adam with Hypergradient descent from [arxiv:Online Learning Rate Adaptation with Hypergradient Descent](https://arxiv.org/abs/1703.04782) I have set the learning rate's learning rate to 0.1 which is much higher than they recommend, but it works well for the experiments I have run.
+
 ### Planned
 
 * ADINE - ADaptive INErtia from [arxiv:ADINE: An Adaptive Momentum Method for Stochastic Gradient Descent](https://arxiv.org/abs/1712.07424)
-* COCOB - COntinuous COin Betting from [arxiv:Training Deep Networks without Learning Rates Through Coin Betting](https://arxiv.org/abs/1705.07795)
 * PowerSign optimizer from https://arxiv.org/abs/1709.07417 : lr * g * e ^ (sign(g) * sign(EMA(.9)(g)))
 
 ## Activations

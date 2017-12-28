@@ -34,15 +34,17 @@ class GRU(RNNCellBase):
         self.hidden = None
         self.weight_ih.detach_()
         self.weight_hh.detach_()
-        self.bias_ih.detach_()
-        self.bias_hh.detach_()
+        if self.bias: 
+            self.bias_ih.detach_()
+            self.bias_hh.detach_()
     
     def detach_hidden(self):
         self.hidden.detach_()
         self.weight_ih.detach_()
         self.weight_hh.detach_()
-        self.bias_ih.detach_()
-        self.bias_hh.detach_()
+        if self.bias: 
+            self.bias_ih.detach_()
+            self.bias_hh.detach_()
 
     def forward(self, input_data, future=0):
         timesteps, batch_size, features = input_data.size()
