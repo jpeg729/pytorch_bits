@@ -2,7 +2,7 @@
 from torch.nn.modules.module import Module
 import torch.nn.functional as F
 
-from .. import activations
+from pytorch_bits import activations
 
 class RNNCellBase(Module):
 

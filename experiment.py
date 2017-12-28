@@ -1,3 +1,9 @@
+
+if __name__ == '__main__' and __package__ is None:
+    import os
+    os.sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    __package__ = "pytorch_bits"
+
 import sys
 import time
 from argparse import ArgumentParser
