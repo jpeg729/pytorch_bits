@@ -12,8 +12,8 @@ class GRU(RNNCellBase):
         self.input_size = input_size
         self.hidden_size = hidden_size
         self.bias = bias
-        self.sigmoid = self.get_activation(sigmoid)
-        self.tanh = self.get_activation(tanh)
+        self.sigmoid = F.sigmoid if sigmoid is None else self.get_activation(sigmoid)
+        self.tanh = F.tanh if tanh is None else self.get_activation(tanh)
         self.weight_ih = Parameter(torch.Tensor(3 * hidden_size, input_size))
         self.weight_hh = Parameter(torch.Tensor(3 * hidden_size, hidden_size))
         if bias:

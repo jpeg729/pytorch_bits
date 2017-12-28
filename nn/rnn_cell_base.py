@@ -2,7 +2,7 @@
 from torch.nn.modules.module import Module
 import torch.nn.functional as F
 
-import activations
+from .. import activations
 
 class RNNCellBase(Module):
 
