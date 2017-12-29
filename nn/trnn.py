@@ -8,11 +8,13 @@ from .rnn_cell_base import RNNCellBase
 
 class TRNN(RNNCellBase):
 
-    def __init__(self, input_size, hidden_size, bias=True):
+    def __init__(self, input_size, hidden_size, bias=True, sigmoid=None, tanh=None):
         super(TRNN, self).__init__()
         self.input_size = input_size
         self.hidden_size = hidden_size
         self.bias = bias
+        self.sigmoid = F.sigmoid if sigmoid is None else self.get_activation(sigmoid)
+        self.tanh = F.tanh if tanh is None else self.get_activation(tanh)
         self.weight_ih = Parameter(torch.Tensor(2 * hidden_size, input_size))
         if bias:
             self.bias_ih = Parameter(torch.Tensor(2 * hidden_size))
@@ -29,22 +31,21 @@ class TRNN(RNNCellBase):
     def reset_hidden(self):
         self.hidden = None
         self.weight_ih.detach_()
-        self.bias_ih.detach_()
+        if self.bias:
+            self.bias_ih.detach_()
     
     def detach_hidden(self):
         self.hidden.detach_()
         self.weight_ih.detach_()
-        self.bias_ih.detach_()
+        if self.bias:
+            self.bias_ih.detach_()
 
     def forward(self, input_data, future=0):
         timesteps, batch_size, features = input_data.size()
-        # print("t %d, b %d, f %d" % (timesteps, batch_size, features))
         outputs = Variable(torch.zeros(timesteps + future, batch_size, self.hidden_size), requires_grad=False)
         
         if self.hidden is None:
             self.hidden = Variable(torch.zeros(batch_size, self.hidden_size), requires_grad=False)
-        # else:
-            # self.hidden.detach_()
         
         self.check_forward_input(input_data[0])
         self.check_forward_hidden(input_data[0], self.hidden)
@@ -54,7 +55,7 @@ class TRNN(RNNCellBase):
             gi = F.linear(input_t.view(batch_size, features), self.weight_ih, self.bias_ih)
             i_n, i_f = gi.chunk(2, 1)
 
-            forgetgate = F.sigmoid(i_f)
+            forgetgate = self.sigmoid(i_f)
             newgate = i_n
             self.hidden = newgate + forgetgate * (self.hidden - newgate)
             outputs[i] = self.hidden

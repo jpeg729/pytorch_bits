@@ -58,6 +58,7 @@ Moreover they all take input of shape `(seq_len, batch_size, features)`. This al
 * SRU - the Simple Recurrent Unit from [arxiv:Training RNNs as fast as CNNs](http://arxiv.org/abs/1709.02755v3). They provide a cuda optimised implementation. This is a simplistic implementation that vectorises the calculation of the gates. In my experience, vectorising the calculation of the gates can slow down the SRU if the `hidden_size` and `batch_size` are really small, for example `hidden_size` = 50 and `batch_size` = 10. I don't know why.
 * CausalConv1d - a wrapper for Conv1d that permutes the input shape to that required by Conv1d, and adds the padding that ensures that each timestep sees no future inputs.
 * QRNN - an unoptimised implementation of [arxiv:Quasi-recurrent neural networks](http://arxiv.org/abs/1611.01576v2) The paper makes the QRNN seem rather complex, but when you write out the step equations you see that it is not very different from most other RNNs.
+* TRNN - a strongly typed simple RNN from [arxiv:Strongly-Typed Recurrent Neural Networks](https://arxiv.org/abs/1602.02218)
 
 ### Planned
 
