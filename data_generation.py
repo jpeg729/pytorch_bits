@@ -33,9 +33,7 @@ def get_batches(X, y, seq_len=100, reason=None):
                 100. * (batch + 1) / batches, 
                 1000 * (time.time()-start_time) / (batch + 1) / (seq_len * X.size(1))), 
                 end=CLR, flush=True)
-    print("\r%s -- time %.5f ms/sample" % (message, 
-        1000 * (time.time()-start_time) / (batch + 1) / (seq_len * X.size(1))), 
-        CLR)
+    print("\r", end=CLR, flush=True)
 
 def sine_1(length, pattern_length=60., add_noise=False, noise_range=(-0.1, 0.1)):
     X = np.arange(length) + np.random.randint(pattern_length)
