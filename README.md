@@ -55,7 +55,7 @@ Moreover they all take input of shape `(seq_len, batch_size, features)`. This al
 * GRU - the typical GRU adapted from the PyTorch source code for GRUCell.
 * MGU and variants - from [arxiv:Minimal Gated Unit for Recurrent Neural Networks](https://arxiv.org/abs/1603.09420) and simplified in [arxiv:Simplified Minimal Gated Unit Variations for Recurrent Neural Networks](http://arxiv.org/abs/1701.03452). I have only coded the original MGU and MGU2 variant because they say it is the best of the three.
 * RAN - the [arxiv:Recurrent Additive Network](http://arxiv.org/abs/1705.07393)
-* SRU - the Simple Recurrent Unit from [arxiv:Training RNNs as fast as CNNs](http://arxiv.org/abs/1709.02755v3). They provide a cuda optimised implementation. This is a simplistic implementation that vectorises the calculation of the gates. In my experience, vectorising the calculation of the gates can slow down the SRU if the `hidden_size` and `batch_size` are really small, for example `hidden_size` = 50 and `batch_size` = 10. I don't know why.
+* SRU - the Simple Recurrent Unit from [arxiv:Training RNNs as fast as CNNs](http://arxiv.org/abs/1709.02755v3). They provide a cuda optimised implementation. This is a simplistic implementation that optionally vectorises the calculation of the gates. The test_sru_optimisation.py script tests the speed of the optimisation when running on the cpu. The difference is negligible.
 * CausalConv1d - a wrapper for Conv1d that permutes the input shape to that required by Conv1d, and adds the padding that ensures that each timestep sees no future inputs.
 * QRNN - an unoptimised implementation of [arxiv:Quasi-recurrent neural networks](http://arxiv.org/abs/1611.01576v2) The paper makes the QRNN seem rather complex, but when you write out the step equations you see that it is not very different from most other RNNs.
 * TRNN - a strongly typed simple RNN from [arxiv:Strongly-Typed Recurrent Neural Networks](https://arxiv.org/abs/1602.02218)
@@ -72,17 +72,22 @@ Moreover they all take input of shape `(seq_len, batch_size, features)`. This al
 
 ## Optimisers
 
+COCOB is great for quick experiments, it has a near optimal learning rate with no hyperparameter tuning, so you can quickly tell which experiments are going nowhere. However I suspect that it relies too heavily on assumptions of convexity of the loss. Other optimisers often get lower loss after many epochs.
+Adam_HD tunes the learning rate of Adam by backpropagating through the update function. It learns pretty fast too.
+
 * COCOB - COntinuous COin Betting from [arxiv:Training Deep Networks without Learning Rates Through Coin Betting](https://arxiv.org/abs/1705.07795)
 * Adam_HD - Adam with Hypergradient descent from [arxiv:Online Learning Rate Adaptation with Hypergradient Descent](https://arxiv.org/abs/1703.04782) I have set the learning rate's learning rate to 0.1 which is much higher than they recommend, but it works well for the experiments I have run.
 
 ### Planned
 
 * ADINE - ADaptive INErtia from [arxiv:ADINE: An Adaptive Momentum Method for Stochastic Gradient Descent](https://arxiv.org/abs/1712.07424)
-* PowerSign optimizer from https://arxiv.org/abs/1709.07417 : lr * g * e ^ (sign(g) * sign(EMA(.9)(g)))
+* PowerSign optimizer from https://arxiv.org/abs/1709.07417 : lr * g * e^(sign(g)\*sign(m)) where m = .9\*m_tm1 + .1\*g
 
 ## Activations
 
-* ISRLU - [arxiv:Improving Deep Learning by Inverse Square Root Linear Units (ISRLUs)](https://arxiv.org/abs/1710.09967) An alternative to ELU that ought to be faster to calculate.
+Note that PyTorch Tanh, Sigmoid and ELU are already very well optimised when run on cpu. My tests show that my simplistic implementation provides little difference when running on cpu.
+
+* ISRLU - [arxiv:Improving Deep Learning by Inverse Square Root Linear Units (ISRLUs)](https://arxiv.org/abs/1710.09967) An alternative to ELU that is supposed to be faster to calculate.
 * ISRU_tanh - from the same paper. A proposed alternative to tanh.
 * ISRU_sigmoid - from the same paper. A proposed alternative to sigmoid.
 

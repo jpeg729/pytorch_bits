@@ -124,11 +124,12 @@ class SRU2(RNNCellBase):
 
 class SRU(RNNCellBase):
 
-    def __init__(self, input_size, hidden_size, bias=True, sigmoid=None, tanh=None):
+    def __init__(self, input_size, hidden_size, bias=True, sigmoid=None, tanh=None, gpu=False):
         super(SRU, self).__init__()
         self.input_size = input_size
         self.hidden_size = hidden_size
         self.bias = bias
+        self.gpu = gpu
         self.sigmoid = F.sigmoid if sigmoid is None else self.get_activation(sigmoid)
         self.tanh = F.tanh if tanh is None else self.get_activation(tanh)
         self.weight_ih = Parameter(torch.Tensor(3 * hidden_size, input_size))
@@ -166,27 +167,28 @@ class SRU(RNNCellBase):
         
         self.check_forward_input(input_data[0])
         self.check_forward_hidden(input_data[0], self.hidden)
-        # """
-        gis = F.linear(input_data, self.weight_ih, self.bias_ih)
         
-        for i, gi in enumerate(gis.split(1)):
-            i_r, i_f, i_n = gi.squeeze().chunk(3, 1)
+        if self.gpu:
+            gis = F.linear(input_data, self.weight_ih, self.bias_ih)
+            
+            for i, gi in enumerate(gis.split(1)):
+                i_r, i_f, i_n = gi.squeeze().chunk(3, 1)
 
-            readgate = self.sigmoid(i_r)
-            forgetgate = self.sigmoid(i_f)
-            newgate = i_n
-            self.hidden = newgate + forgetgate * (self.hidden - newgate)
-            outputs[i] = newgate + readgate * (F.tanh(self.hidden) - newgate)
-        """
-        for i, input_t in enumerate(input_data.split(1)):
-            x = input_t.view(batch_size, features)
-            gi = F.linear(x, self.weight_ih, self.bias_ih)
-            i_r, i_f, i_n = gi.chunk(3, 1)
+                readgate = self.sigmoid(i_r)
+                forgetgate = self.sigmoid(i_f)
+                newgate = i_n
+                self.hidden = newgate + forgetgate * (self.hidden - newgate)
+                outputs[i] = newgate + readgate * (F.tanh(self.hidden) - newgate)
+        else:
+            for i, input_t in enumerate(input_data.split(1)):
+                x = input_t.view(batch_size, features)
+                gi = F.linear(x, self.weight_ih, self.bias_ih)
+                i_r, i_f, i_n = gi.chunk(3, 1)
 
-            readgate = F.sigmoid(i_r)
-            forgetgate = F.sigmoid(i_f)
-            newgate = i_n
-            self.hidden = newgate + forgetgate * (self.hidden - newgate)
-            outputs[i] = newgate + readgate * (F.tanh(self.hidden) - newgate)
-        #"""
+                readgate = F.sigmoid(i_r)
+                forgetgate = F.sigmoid(i_f)
+                newgate = i_n
+                self.hidden = newgate + forgetgate * (self.hidden - newgate)
+                outputs[i] = newgate + readgate * (F.tanh(self.hidden) - newgate)
+        
         return outputs
