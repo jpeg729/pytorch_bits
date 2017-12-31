@@ -5,7 +5,9 @@ import torch
 from torch.autograd import Variable
 import signalz
 
-CLR = "\x1b[0K"
+import platform
+print("Detected platform is", platform.system())
+CLR = "\x1b[0K" if platform.system() != "Windows" else ""
 
 def get_batches(X, y, seq_len=100, reason=None):
     if seq_len > len(X): seq_len = len(X)
