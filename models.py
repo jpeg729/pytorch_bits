@@ -19,6 +19,8 @@ class Model(nn.Module):
                 layer = getattr(custom, cell_type)
             elif hasattr(nn, cell_type):
                 layer = getattr(nn, cell_type)
+            else:
+                raise Exception("Unrecognised layer type " + cell_type)
 
             layer_args = {}
             if "input_size" in layer.__init__.__code__.co_varnames:
