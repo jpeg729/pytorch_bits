@@ -37,9 +37,9 @@ The generator produces a tensor of shape `(length, batches, 1)` containing `batc
 
 ## Model generation
 
-The `--layers` argument takes a simplistic model specification. 
+The `--layers` argument takes a simplistic model specification. First you specify the layer type, add a "\_", then if the layer type needs a size, you add a number. Then you can follow up with "\_k=value" for any keyword arguments. If the keyword contains "\_" replace it with "-".
 
-For example: `--layers LSTM_50 LSTM_60 GRU_70` specifies a three layer network with 50 LSTM units in the first layer, 60 LSTM units in the second layer and 70 GRU units in the third layer.
+For example: `--layers LSTM_50 Dropout_p=.5 CausalConv1d_70_kernel-size=3` specifies a three layer network with 50 LSTM units in the first layer, Dropout with p=.5 as the second layer, and 70 CausalConv1d units with kernel_size=3 in the third layer.
 
 If the output of the last requested layer doesn't match the number of target values (for these experiments the target size is 1) then the script adds a Linear layer to produce the required number of output values.
 

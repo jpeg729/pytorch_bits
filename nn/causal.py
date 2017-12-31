@@ -4,8 +4,8 @@ import torch.nn.functional as F
 
 class CausalConv1d(nn.Conv1d):
     def __init__(self,
-                 in_channels,
-                 out_channels,
+                 input_size,
+                 hidden_size,
                  kernel_size,
                  stride=1,
                  dilation=1,
@@ -15,8 +15,8 @@ class CausalConv1d(nn.Conv1d):
                  tanh=None):
         self.left_padding = (kernel_size - 1) * dilation
         super(CausalConv1d, self).__init__(
-            in_channels,
-            out_channels,
+            input_size,
+            hidden_size,
             kernel_size,
             stride=stride,
             padding=0,
@@ -64,28 +64,28 @@ class ShortWave(nn.Module):
             data = layer(data)
         return data
 
-def test_CausalConv1d(timesteps, in_channels, out_channels, batch_size, kernel_size, dilation, bias):
-    m = CausalConv1d(in_channels, out_channels, kernel_size=kernel_size, dilation=dilation, bias=bias!=0)
+def test_CausalConv1d(timesteps, input_size, hidden_size, batch_size, kernel_size, dilation, bias):
+    m = CausalConv1d(input_size, hidden_size, kernel_size=kernel_size, dilation=dilation, bias=bias!=0)
     m.weight.data.fill_(1)
     if bias:
         m.bias.data.fill_(bias)
-    x = torch.autograd.Variable(torch.zeros(timesteps, batch_size, in_channels), requires_grad=False)
+    x = torch.autograd.Variable(torch.zeros(timesteps, batch_size, input_size), requires_grad=False)
     
     for batch in range(batch_size):
         for t in range(timesteps):
-            for ci in range(in_channels):
+            for ci in range(input_size):
                 x.data.fill_(0)
                 x[t, batch, ci] = 1
                 out = m(x)
                 for b in range(batch_size):
-                    for co in range(out_channels):
+                    for co in range(hidden_size):
                         if b == batch:
                             target = [1+bias if j in range(t, t+k*d, d) else bias for j in range(timesteps)]
                         else:
                             target = [bias for j in range(timesteps)]
                         if list(out[:, b, co].data) != target:
                             print("\nCausalConv1d wrong output for kernel_size", k, 
-                                "and dilation", d, "i", in_channels, "out", out_channels,
+                                "and dilation", d, "i", input_size, "out", hidden_size,
                                 "batch_size", batch_size, 
                                 "bias", bias)
                             print("input ", " ".join(str(int(el)) for el in x[:, b, co].data))

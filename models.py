@@ -4,7 +4,7 @@ import nn as custom
 
 
 class Model(nn.Module):
-    def __init__(self, input_size=1, layers=["LSTM_51"], output_size=1, sigmoid=None, tanh=None):
+    def __init__(self, input_size=1, layers=["LSTM_51"], output_size=1, sigmoid=None, tanh=None, biases=True):
         super(Model, self).__init__()
         self.input_size = input_size
         self.output_size = output_size
@@ -12,15 +12,48 @@ class Model(nn.Module):
         prev_size = input_size
         for l, spec in enumerate(layers):
             bits = spec.split("_")
-            cell_type = bits[0]
-            hidden_size = int(bits[1])
-            print("Adding layer of type", spec, ":", prev_size, "->", hidden_size, *bits[2:])
-            layer = getattr(custom, cell_type)(
-                input_size=prev_size, hidden_size=hidden_size, *bits[2:],
-                sigmoid=sigmoid, tanh=tanh)
+            cell_type = bits.pop(0)
+            print(spec, cell_type, bits)
+
+            if hasattr(custom, cell_type):
+                layer = getattr(custom, cell_type)
+            elif hasattr(nn, cell_type):
+                layer = getattr(nn, cell_type)
+
+            layer_args = {}
+            if "input_size" in layer.__init__.__code__.co_varnames:
+                layer_args["input_size"] = prev_size
+            if "hidden_size" in layer.__init__.__code__.co_varnames:
+                layer_args["hidden_size"] = int(bits.pop(0))
+                prev_size = layer_args["hidden_size"]
+            
+            for a in bits:
+                print(a)
+                k, v = a.split("=")
+                k = k.replace("-", "_")
+                if k not in layer.__init__.__code__.co_varnames:
+                    print("kwarg", k, "for", cell_type, "not recognised")
+                    continue
+                for t in (int, float):
+                    try:
+                        v = t(v)
+                        break
+                    except ValueError:
+                        pass
+                layer_args[k] = v
+
+            if "tanh" in layer.__init__.__code__.co_varnames:
+                layer_args["tanh"] = tanh
+            if "sigmoid" in layer.__init__.__code__.co_varnames:
+                layer_args["sigmoid"] = sigmoid
+            if "bias" in layer.__init__.__code__.co_varnames:
+                layer_args["bias"] = biases
+
+            print("Adding layer of type", spec, ":", layer_args)
+            layer = layer(**layer_args,)
             self.layers.append(layer)
             self.add_module("layer"+str(l), layer)
-            prev_size = hidden_size
+
         if prev_size != output_size:
             print("Adding linear layer :", prev_size, "->", output_size)
             layer = nn.Linear(prev_size, output_size)
