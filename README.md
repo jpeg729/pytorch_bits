@@ -59,11 +59,11 @@ Moreover they all take input of shape `(seq_len, batch_size, features)`. This al
 * CausalConv1d - a wrapper for Conv1d that permutes the input shape to that required by Conv1d, and adds the padding that ensures that each timestep sees no future inputs.
 * QRNN - an unoptimised implementation of [arxiv:Quasi-recurrent neural networks](http://arxiv.org/abs/1611.01576v2) The paper makes the QRNN seem rather complex, but when you write out the step equations you see that it is not very different from most other RNNs.
 * TRNN - a strongly typed simple RNN from [arxiv:Strongly-Typed Recurrent Neural Networks](https://arxiv.org/abs/1602.02218)
+* Chaos Free Network (CFN) from [arxiv:A recurrent neural network without chaos](https://arxiv.org/abs/1612.06212) h_t = f * tanh(h_tm1) + i * tanh(Wx), where f, i = sigmoid(Wx + Vh_tm1 + b)
 
 ### Planned
 
 * Strongly typed LSTM and GRU from [arxiv:Strongly-Typed Recurrent Neural Networks](https://arxiv.org/abs/1602.02218)
-* Chaos Free Network (CFN) from [arxiv:A recurrent neural network without chaos](https://arxiv.org/abs/1612.06212) h_t = f * tanh(h_tm1) + i * tanh(Wx), where f, i = sigmoid(Wx + Vh_tm1 + b)
 * Recurrent Identity Network (RIN) from [arxiv:Overcoming the vanishing gradient problem in plain recurrent networks](https://arxiv.org/abs/1801.06105) They converge faster and achieve better accuracy. The basic idea is to initialise the hidden-hidden weights to be ~= 1 rather than ~= 0.
 * Phased LSTM from [arxiv:Phased LSTM: Accelerating Recurrent Network Training for Long or Event-based Sequences](https://arxiv.org/abs/1610.09513) The hidden-hidden update is gated by a periodic function which lets updates through only a small percentage of the time. This opens the possibility of irregular updates.
 

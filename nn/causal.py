@@ -33,7 +33,7 @@ class CausalConv1d(nn.Conv1d):
         return conv_out.permute(2, 0, 1)
 
 class Wave(nn.Module):
-    def __init__(self, input_size, hidden_size, layers=3):
+    def __init__(self, input_size, hidden_size, layers=3, activation="tanh"):
         super(Wave, self).__init__()
         self.layers = []
         prev_size = input_size
