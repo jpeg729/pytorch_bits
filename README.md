@@ -98,10 +98,10 @@ Note that PyTorch Tanh, Sigmoid and ELU are already very well optimised when run
 * ISRLU - [arxiv:Improving Deep Learning by Inverse Square Root Linear Units (ISRLUs)](https://arxiv.org/abs/1710.09967) An alternative to ELU that is supposed to be faster to calculate.
 * ISRU_tanh - from the same paper. A proposed alternative to tanh.
 * ISRU_sigmoid - from the same paper. A proposed alternative to sigmoid.
+* Bipolar activation wrapper from [arxiv:Shifting Mean Activation Towards Zero with Bipolar Activation Functions](https://arxiv.org/abs/1709.04054) Bipolar(f, x_i) = f(x_i) if i is even else -f(-x_i). The resulting activation has mean zero. Note: initialise weights so that the layer has variance ~= 1.
 
 ### Planned
 
-* Bipolar activation wrapper from [arxiv:Shifting Mean Activation Towards Zero with Bipolar Activation Functions](https://arxiv.org/abs/1709.04054) Bipolar(f, x_i) = f(x_i) if i is even else -f(-x_i). The resulting activation has mean zero. Note: initialise weights so that the layer has variance ~= 1.
 * [arxiv:Noisy activation functions](https://arxiv.org/abs/1603.00391) are versions of saturating activation functions that add noise when the output is in the saturation zones.
 * The soft exponential activation from [arxiv:A continuum among logarithmic, linear, and exponential functions, and its potential to improve generalization in neural networks](https://arxiv.org/abs/1602.01321) A learnable parameter allows the model to choose between f(x)=log(x), f(x)=x and f(x)=exp(x). Neural networks can easily add values, but can't easily multiply them. With this activation multiplication becomes easy e.g. exp(log(x_0) + log(x_1)).
   
