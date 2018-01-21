@@ -7,6 +7,7 @@ import signalz
 
 import platform
 print("Detected platform is", platform.system())
+# in bash on Ubuntu printing "\x1b[0K" will clear to the end of the line
 CLR = "\x1b[0K" if platform.system() != "Windows" else ""
 
 def get_batches(X, y, seq_len=100, reason=None):

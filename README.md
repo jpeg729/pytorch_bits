@@ -63,12 +63,16 @@ Moreover they all take input of shape `(seq_len, batch_size, features)`. This al
 ### Planned
 
 * Strongly typed LSTM and GRU from [arxiv:Strongly-Typed Recurrent Neural Networks](https://arxiv.org/abs/1602.02218)
+* Chaos Free Network (CFN) from [arxiv:A recurrent neural network without chaos](https://arxiv.org/abs/1612.06212) h_t = f * tanh(h_tm1) + i * tanh(Wx), where f, i = sigmoid(Wx + Vh_tm1 + b)
+* Recurrent Identity Network (RIN) from [arxiv:Overcoming the vanishing gradient problem in plain recurrent networks](https://arxiv.org/abs/1801.06105) They converge faster and achieve better accuracy. The basic idea is to initialise the hidden-hidden weights to be ~= 1 rather than ~= 0.
+* Phased LSTM from [arxiv:Phased LSTM: Accelerating Recurrent Network Training for Long or Event-based Sequences](https://arxiv.org/abs/1610.09513) The hidden-hidden update is gated by a periodic function which lets updates through only a small percentage of the time. This opens the possibility of irregular updates.
 
 ### Ideas/research
 
 * I plan to study [arxiv:Unbiased Online Recurrent Optimization](http://arxiv.org/abs/1702.05043), but for the moment it is not clear to me how best to implement it.
 * Optional noisy initial hidden states. Otherwise the model will learn to cope with the fact of having zero initial hidden state which may hinder learning the hidden state dynamics later in the sequences. This probably isn't very important if I have only a few sequences that are very long and that are normalised to zero mean.
 * The LSTM class in PyTorch builds a configurable number of identically sized LSTM layers. This architecture allows us to calculate W x h_tm1 for all layers in one single operation. I may try adapting the above layers to take advantage of this.
+* Replace sigmoid activation for gates with ternary activation f(x) = 1.5 * tanh(x) + 0.5 * tanh(−3 * x) which has 0 gradient at 0 and has the advantage of being symetric around zero.
 
 ## Optimisers
 
@@ -80,8 +84,12 @@ Adam_HD tunes the learning rate of Adam by backpropagating through the update fu
 
 ### Planned
 
+* SGD_HD - SGD with Hypergradient descent from [arxiv:Online Learning Rate Adaptation with Hypergradient Descent](https://arxiv.org/abs/1703.04782).
 * ADINE - ADaptive INErtia from [arxiv:ADINE: An Adaptive Momentum Method for Stochastic Gradient Descent](https://arxiv.org/abs/1712.07424)
-* PowerSign optimizer from https://arxiv.org/abs/1709.07417 : lr * g * e^(sign(g)\*sign(m)) where m = .9\*m_tm1 + .1\*g
+
+### Ideas/research
+
+* Use [arxiv:Safe Mutations for Deep and Recurrent Neural Networks through Output Gradients](https://arxiv.org/abs/1712.06563) to produce random perturbations when training gets stuck. The basic idea involves scaling weight changes according to the gradient of the model's *output* w.r.t. its weights.
 
 ## Activations
 
@@ -91,6 +99,12 @@ Note that PyTorch Tanh, Sigmoid and ELU are already very well optimised when run
 * ISRU_tanh - from the same paper. A proposed alternative to tanh.
 * ISRU_sigmoid - from the same paper. A proposed alternative to sigmoid.
 
+### Planned
+
+* Bipolar activation wrapper from [arxiv:Shifting Mean Activation Towards Zero with Bipolar Activation Functions](https://arxiv.org/abs/1709.04054) Bipolar(f, x_i) = f(x_i) if i is even else -f(-x_i). The resulting activation has mean zero. Note: initialise weights so that the layer has variance ~= 1.
+* [arxiv:Noisy activation functions](https://arxiv.org/abs/1603.00391) are versions of saturating activation functions that add noise when the output is in the saturation zones.
+* The soft exponential activation from [arxiv:A continuum among logarithmic, linear, and exponential functions, and its potential to improve generalization in neural networks](https://arxiv.org/abs/1602.01321) A learnable parameter allows the model to choose between f(x)=log(x), f(x)=x and f(x)=exp(x). Neural networks can easily add values, but can't easily multiply them. With this activation multiplication becomes easy e.g. exp(log(x_0) + log(x_1)).
+  
 ## Regularisers
 
 ### Planned
