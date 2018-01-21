@@ -71,6 +71,6 @@ class RAN(RNNCellBase):
             forgetgate = self.sigmoid(i_f + h_f)
             newgate = i_n
             self.hidden = inputgate * newgate + forgetgate * self.hidden
-            outputs[i] = F.tanh(self.hidden)
+            outputs[i] = self.tanh(self.hidden)
         
         return outputs

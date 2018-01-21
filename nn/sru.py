@@ -118,7 +118,7 @@ class SRU2(RNNCellBase):
             forgetgate = self.sigmoid(i_f)
             newgate = i_n
             self.hidden = inputgate * newgate + forgetgate * self.hidden
-            outputs[i] = F.tanh(self.hidden)
+            outputs[i] = self.tanh(self.hidden)
         
         return outputs
 
@@ -178,17 +178,17 @@ class SRU(RNNCellBase):
                 forgetgate = self.sigmoid(i_f)
                 newgate = i_n
                 self.hidden = newgate + forgetgate * (self.hidden - newgate)
-                outputs[i] = newgate + readgate * (F.tanh(self.hidden) - newgate)
+                outputs[i] = newgate + readgate * (self.tanh(self.hidden) - newgate)
         else:
             for i, input_t in enumerate(input_data.split(1)):
                 x = input_t.view(batch_size, features)
                 gi = F.linear(x, self.weight_ih, self.bias_ih)
                 i_r, i_f, i_n = gi.chunk(3, 1)
 
-                readgate = F.sigmoid(i_r)
-                forgetgate = F.sigmoid(i_f)
+                readgate = self.sigmoid(i_r)
+                forgetgate = self.sigmoid(i_f)
                 newgate = i_n
                 self.hidden = newgate + forgetgate * (self.hidden - newgate)
-                outputs[i] = newgate + readgate * (F.tanh(self.hidden) - newgate)
+                outputs[i] = newgate + readgate * (self.tanh(self.hidden) - newgate)
         
         return outputs

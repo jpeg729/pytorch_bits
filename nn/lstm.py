@@ -75,7 +75,7 @@ class LSTM(RNNCellBase):
             outgate = self.sigmoid(outgate)
 
             cy = (forgetgate * cx) + (ingate * cellgate)
-            hy = outgate * F.tanh(cy)
+            hy = outgate * self.tanh(cy)
             
             self.hidden = hy, cy
             outputs[i] = self.hidden[0]
