@@ -98,10 +98,6 @@ try:
         print("Ground truth - Epoch " + str(epoch) + " -- train loss = " + str(training_loss) + " -- val loss = " + str(val_loss)
             + " -- time %.1fs" % ((time.time() - start) / (epoch + 1)))
 
-        # Early stopping condition -- when the last 4 epochs results in a validation error < 0.015
-        if len(val_loss_list) >= 4 and max(val_loss_list[-4:]) < 0.015:
-            print("Triggering early stopping criteria")
-            break
 except KeyboardInterrupt:
     print("\nTraining interrupted")
 
