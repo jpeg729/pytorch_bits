@@ -72,7 +72,7 @@ Moreover they all take input of shape `(seq_len, batch_size, features)`. This al
 * I plan to study [arxiv:Unbiased Online Recurrent Optimization](http://arxiv.org/abs/1702.05043), but for the moment it is not clear to me how best to implement it.
 * Optional noisy initial hidden states. Otherwise the model will learn to cope with the fact of having zero initial hidden state which may hinder learning the hidden state dynamics later in the sequences. This probably isn't very important if I have only a few sequences that are very long and that are normalised to zero mean.
 * The LSTM class in PyTorch builds a configurable number of identically sized LSTM layers. This architecture allows us to calculate W x h_tm1 for all layers in one single operation. I may try adapting the above layers to take advantage of this.
-* Replace sigmoid activation for gates with ternary activation f(x) = 1.5 * tanh(x) + 0.5 * tanh(−3 * x) which has 0 gradient at 0 and has the advantage of being symetric around zero.
+* Sigmoid activation is typically used for gates, but it is not symetric. My input data is largely symetric and I wonder whether a more symetric gating function would speed up learning. The [Strongly Typed RNN paper](https://arxiv.org/abs/1602.02218) mentioned above uses tanh as an output gating function in some cases. Another option would be to use the TernaryTanh activation function that is like tanh but is flat around 0. f(x) = 1.5 * tanh(x) + 0.5 * tanh(−3 * x)
 
 ## Optimisers
 
@@ -99,11 +99,12 @@ Note that PyTorch Tanh, Sigmoid and ELU are already very well optimised when run
 * ISRU_tanh - from the same paper. A proposed alternative to tanh.
 * ISRU_sigmoid - from the same paper. A proposed alternative to sigmoid.
 * Bipolar activation wrapper from [arxiv:Shifting Mean Activation Towards Zero with Bipolar Activation Functions](https://arxiv.org/abs/1709.04054) Bipolar(f, x_i) = f(x_i) if i is even else -f(-x_i). The resulting activation has mean zero. Note: initialise weights so that the layer has variance ~= 1.
+* The soft exponential activation from [arxiv:A continuum among logarithmic, linear, and exponential functions, and its potential to improve generalization in neural networks](https://arxiv.org/abs/1602.01321) A learnable parameter allows the model to choose between f(x)=log(x), f(x)=x and f(x)=exp(x). Neural networks can easily add values, but can't easily multiply them. With this activation multiplication becomes easy e.g. exp(log(x_0) + log(x_1)).
+* TernaryTanh from [the R2RT blog](https://r2rt.com/beyond-binary-ternary-and-one-hot-neurons.html) Tanh is essentially a binary function, it has two stable output zones, 1 and -1. TernaryTanh also has a flat area around zero, enabling a model to choose between 1, -1 and 0 output with greater ease.
 
 ### Planned
 
 * [arxiv:Noisy activation functions](https://arxiv.org/abs/1603.00391) are versions of saturating activation functions that add noise when the output is in the saturation zones.
-* The soft exponential activation from [arxiv:A continuum among logarithmic, linear, and exponential functions, and its potential to improve generalization in neural networks](https://arxiv.org/abs/1602.01321) A learnable parameter allows the model to choose between f(x)=log(x), f(x)=x and f(x)=exp(x). Neural networks can easily add values, but can't easily multiply them. With this activation multiplication becomes easy e.g. exp(log(x_0) + log(x_1)).
   
 ## Regularisers
 
