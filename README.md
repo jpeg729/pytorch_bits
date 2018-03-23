@@ -72,7 +72,7 @@ Moreover they all take input of shape `(seq_len, batch_size, features)`. This al
 * I plan to study [arxiv:Unbiased Online Recurrent Optimization](http://arxiv.org/abs/1702.05043), but for the moment it is not clear to me how best to implement it.
 * Optional noisy initial hidden states. Otherwise the model will learn to cope with the fact of having zero initial hidden state which may hinder learning the hidden state dynamics later in the sequences. This probably isn't very important if I have only a few sequences that are very long and that are normalised to zero mean.
 * The LSTM class in PyTorch builds a configurable number of identically sized LSTM layers. This architecture allows us to calculate W x h_tm1 for all layers in one single operation. I may try adapting the above layers to take advantage of this.
-* Sigmoid activation is typically used for gates, but it is not symetric. Lets try using tanh instead [Using tanh instead of sigmoid in RNNs](https://github.com/jpeg729/pytorch_bits/wiki/Tanh-instead-of-sigmoid).
+* Sigmoid activation is typically used for gates, but it is not symetric. [Lets try using tanh instead(https://github.com/jpeg729/pytorch_bits/wiki/Tanh-instead-of-sigmoid).
 
 ## Optimisers
 
@@ -105,6 +105,7 @@ Note that PyTorch Tanh, Sigmoid and ELU are already very well optimised when run
 ### Planned
 
 * [arxiv:Noisy activation functions](https://arxiv.org/abs/1603.00391) are versions of saturating activation functions that add noise when the output is in the saturation zones.
+* Learned affine combinations of activations [Learning Combinations of Activation Functions](https://arxiv.org/abs/1801.09403)
   
 ## Regularisers
 
