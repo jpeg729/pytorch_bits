@@ -33,20 +33,10 @@ class LSTM(RNNCellBase):
     
     def reset_hidden(self):
         self.hidden = None
-        self.weight_ih.detach_()
-        self.weight_hh.detach_()
-        if self.bias: 
-            self.bias_ih.detach_()
-            self.bias_hh.detach_()
     
     def detach_hidden(self):
         self.hidden[0].detach_()
         self.hidden[1].detach_()
-        self.weight_ih.detach_()
-        self.weight_hh.detach_()
-        if self.bias: 
-            self.bias_ih.detach_()
-            self.bias_hh.detach_()
 
     def forward(self, input_data, future=0):
         timesteps, batch_size, features = input_data.size()

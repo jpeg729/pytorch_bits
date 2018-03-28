@@ -30,15 +30,9 @@ class fakeQRNN(RNNCellBase):
     
     def reset_hidden(self):
         self.hidden = None
-        self.weight_ih.detach_()
-        if self.bias: 
-            self.bias_ih.detach_()
     
     def detach_hidden(self):
         self.hidden.detach_()
-        self.weight_ih.detach_()
-        if self.bias: 
-            self.bias_ih.detach_()
 
     def forward(self, input_data, future=0):
         timesteps, batch_size, features = input_data.size()

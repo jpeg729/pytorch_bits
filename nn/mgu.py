@@ -34,19 +34,9 @@ class MGU(RNNCellBase):
     def reset_hidden(self):
         self.hidden = None
         self.timesteps = 0
-        self.weight_ih.detach_()
-        self.weight_hh.detach_()
-        if self.bias: 
-            self.bias_ih.detach_()
-            self.bias_hh.detach_()
     
     def detach_hidden(self):
         self.hidden.detach_()
-        self.weight_ih.detach_()
-        self.weight_hh.detach_()
-        if self.bias: 
-            self.bias_ih.detach_()
-            self.bias_hh.detach_()
 
     def forward(self, input_data, future=0):
         timesteps, batch_size, features = input_data.size()
@@ -101,19 +91,9 @@ class MGU2(RNNCellBase):
     def reset_hidden(self):
         self.hidden = None
         self.timesteps = 0
-        self.weight_ih.detach_()
-        self.weight_hh.detach_()
-        if self.bias: 
-            self.bias_ih.detach_()
-            self.bias_hh.detach_()
     
     def detach_hidden(self):
         self.hidden.detach_()
-        self.weight_ih.detach_()
-        self.weight_hh.detach_()
-        if self.bias: 
-            self.bias_ih.detach_()
-            self.bias_hh.detach_()
 
     def forward(self, input_data, future=0):
         timesteps, batch_size, features = input_data.size()
